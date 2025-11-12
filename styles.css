@@ -140,9 +140,9 @@ body {
   }
 }
 
-/* モバイルコントロール（デフォルトでは非表示） */
+/* モバイルコントロール（すべてのデバイスで表示） */
 #mobileControls {
-  display: none;
+  display: block;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -238,13 +238,8 @@ body {
   box-shadow: 0 0 20px rgba(255, 13, 114, 0.8);
 }
 
-/* メディアクエリ：モバイル端末用 */
+/* メディアクエリ：モバイル端末用（サイズ調整） */
 @media (max-width: 768px) {
-  /* モバイルコントロールを表示 */
-  #mobileControls {
-    display: block;
-  }
-
   /* 操作説明を簡略化 */
   #info {
     font-size: 12px;
