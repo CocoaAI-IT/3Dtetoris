@@ -1,9 +1,16 @@
 // --- 定数定義 ---
-const WIDTH = 8;
-const HEIGHT = 20;
-const DEPTH = 8;
+const WIDTH = 4;
+const HEIGHT = 12;
+const DEPTH = 4;
 const BLOCK_SIZE = 1;
 const DROP_INTERVAL = 800; // ms
+
+// ゲーム状態
+const GameState = {
+  WAITING: 'waiting',
+  PLAYING: 'playing',
+  GAME_OVER: 'game_over'
+};
 
 // --- グローバル変数 ---
 let scene, camera, renderer, controls;
@@ -11,8 +18,9 @@ let arena = create3DMatrix(WIDTH, HEIGHT, DEPTH);
 let currentPiece, currentPos;
 let lastDropTime = 0;
 let blocksGroup = new THREE.Group();
+let gameState = GameState.WAITING;
 
-// 以下の行を追加
+// ゲーム統計
 let score = 0;
 let level = 1;
 let linesCleared = 0;
@@ -20,11 +28,16 @@ let nextPiece;
 let nextPieceRenderer, nextPieceScene, nextPieceCamera;
 let ghostGroup;
 
+// スコアリング
+let renCount = 0; // 連続消しカウンター
+let lastClearWasSpecial = false; // Back To Back判定用
+
 // --- テトリミノ定義 (3D配列: [y][z][x]) ---
+// 4×4フィールド用に調整
 const tetrominoes = [
-  // I
-  [[[1, 1, 1, 1]]],
-  // O (キューブ形状)
+  // I (3ブロック)
+  [[[1, 1, 1]]],
+  // O (キューブ形状 2×2×2)
   [
     [
       [1, 1],
@@ -68,6 +81,15 @@ const tetrominoes = [
     [
       [1, 1, 0],
       [0, 1, 1],
+    ],
+  ],
+  // 3D専用ピース: 縦型I (2×2高さ)
+  [
+    [
+      [1],
+    ],
+    [
+      [1],
     ],
   ],
 ];
@@ -306,8 +328,6 @@ class SimpleOrbitControls {
 
 // --- 初期化とゲーム開始 ---
 sceneInit();
-generateNextPiece();
-spawnPiece();
 updateDisplay();
 animate();
 
@@ -466,8 +486,8 @@ function spawnPiece() {
   };
 
   if (collide(arena, currentPiece, currentPos)) {
-    alert("Game Over! Final Score: " + score);
-    resetGame();
+    gameOver();
+    return;
   }
 
   generateNextPiece();
@@ -598,9 +618,29 @@ function sweep() {
 
   if (clearedLines > 0) {
     linesCleared += clearedLines;
-    // スコア計算（レベルとライン数に応じて）
-    const lineScores = [0, 100, 300, 500, 800];
-    score += lineScores[Math.min(clearedLines, 4)] * level;
+
+    // 拡張スコアシステム
+    let earnedScore = calculateScore(clearedLines);
+
+    // RENボーナス
+    renCount++;
+    const renBonus = Math.min(50 * renCount, 1000);
+    earnedScore += renBonus;
+
+    // パーフェクトクリアチェック
+    if (isPerfectClear()) {
+      const perfectClearBonus = calculatePerfectClearBonus(clearedLines);
+      earnedScore += perfectClearBonus;
+    }
+
+    // Back To Back ボーナス（4ライン以上の場合）
+    const isSpecialClear = clearedLines >= 4;
+    if (isSpecialClear && lastClearWasSpecial) {
+      earnedScore = Math.floor(earnedScore * 1.5);
+    }
+    lastClearWasSpecial = isSpecialClear;
+
+    score += earnedScore;
 
     // レベルアップ（10ライン毎）
     const newLevel = Math.floor(linesCleared / 10) + 1;
@@ -609,7 +649,55 @@ function sweep() {
     }
 
     updateDisplay();
+  } else {
+    // 消えなかった場合はRENリセット
+    renCount = 0;
   }
+}
+
+// スコア計算関数
+function calculateScore(lines) {
+  const baseScores = {
+    1: 100,   // シングル
+    2: 300,   // ダブル
+    3: 500,   // トリプル
+    4: 800,   // テトリス
+    5: 1200,  // 5層消し（3D拡張）
+    6: 1600,  // 6層消し（3D拡張）
+  };
+
+  // 6層以上は1600点
+  if (lines > 6) {
+    return 1600 * level;
+  }
+
+  return (baseScores[lines] || 0) * level;
+}
+
+// パーフェクトクリアチェック
+function isPerfectClear() {
+  for (let y = 0; y < HEIGHT; y++) {
+    for (let z = 0; z < DEPTH; z++) {
+      for (let x = 0; x < WIDTH; x++) {
+        if (arena[y][z][x] !== 0) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+
+// パーフェクトクリアボーナス
+function calculatePerfectClearBonus(lines) {
+  const bonuses = {
+    1: 800,   // シングル
+    2: 1000,  // ダブル
+    3: 1800,  // トリプル
+    4: 2000,  // テトリス
+  };
+
+  return bonuses[Math.min(lines, 4)] || 2000;
 }
 
 function resetGame() {
@@ -617,13 +705,58 @@ function resetGame() {
   score = 0;
   level = 1;
   linesCleared = 0;
+  renCount = 0;
+  lastClearWasSpecial = false;
+  gameState = GameState.WAITING;
+  currentPiece = null;
+  currentPos = null;
   updateDisplay();
+}
+
+function startGame() {
+  resetGame();
+  gameState = GameState.PLAYING;
+  generateNextPiece();
+  spawnPiece();
+  lastDropTime = performance.now();
+  updateDisplay();
+  hideStartButton();
+  hideGameOverScreen();
+}
+
+function gameOver() {
+  gameState = GameState.GAME_OVER;
+  showGameOverScreen();
+}
+
+function hideStartButton() {
+  const startBtn = document.getElementById('startButton');
+  if (startBtn) startBtn.style.display = 'none';
+}
+
+function showStartButton() {
+  const startBtn = document.getElementById('startButton');
+  if (startBtn) startBtn.style.display = 'block';
+}
+
+function showGameOverScreen() {
+  const gameOverDiv = document.getElementById('gameOver');
+  if (gameOverDiv) {
+    document.getElementById('finalScore').textContent = score;
+    gameOverDiv.style.display = 'block';
+  }
+}
+
+function hideGameOverScreen() {
+  const gameOverDiv = document.getElementById('gameOver');
+  if (gameOverDiv) gameOverDiv.style.display = 'none';
 }
 
 function updateDisplay() {
   document.getElementById("score").textContent = score;
   document.getElementById("level").textContent = level;
   document.getElementById("lines").textContent = linesCleared;
+  document.getElementById("ren").textContent = renCount;
 }
 
 function calculateGhostPosition() {
@@ -642,6 +775,10 @@ function calculateGhostPosition() {
 }
 
 function handleKey(e) {
+  // ゲームがプレイ中でない場合は操作を受け付けない
+  if (gameState !== GameState.PLAYING) return;
+  if (!currentPiece) return;
+
   let moved = false;
   let originalPos = { ...currentPos };
 
@@ -785,16 +922,19 @@ function drawBlocks() {
 function animate(time = 0) {
   requestAnimationFrame(animate);
 
-  // レベルに応じて落下速度を調整
-  const currentDropInterval = Math.max(
-    100,
-    DROP_INTERVAL - (level - 1) * 50
-  );
+  // ゲームがプレイ中の場合のみ落下処理を実行
+  if (gameState === GameState.PLAYING) {
+    // レベルに応じて落下速度を調整
+    const currentDropInterval = Math.max(
+      100,
+      DROP_INTERVAL - (level - 1) * 50
+    );
 
-  const delta = time - lastDropTime;
-  if (delta > currentDropInterval) {
-    playerDrop();
-    lastDropTime = time;
+    const delta = time - lastDropTime;
+    if (delta > currentDropInterval) {
+      playerDrop();
+      lastDropTime = time;
+    }
   }
 
   controls.update();
@@ -802,7 +942,7 @@ function animate(time = 0) {
   renderer.render(scene, camera);
 
   // Next Pieceを再描画（必要に応じて）
-  if (nextPieceRenderer) {
+  if (nextPieceRenderer && gameState !== GameState.WAITING) {
     nextPieceRenderer.render(nextPieceScene, nextPieceCamera);
   }
 }

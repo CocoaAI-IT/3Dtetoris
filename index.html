@@ -22,12 +22,27 @@
       <b>ゲーム情報</b><br />
       スコア: <span id="score">0</span><br />
       レベル: <span id="level">1</span><br />
-      ライン: <span id="lines">0</span>
+      ライン: <span id="lines">0</span><br />
+      REN: <span id="ren">0</span>
     </div>
 
     <div id="nextPiece">
       <b>Next Piece</b><br />
       <canvas id="nextCanvas" width="120" height="120"></canvas>
+    </div>
+
+    <!-- スタートボタン -->
+    <div id="startButton">
+      <button onclick="startGame()">スタート</button>
+    </div>
+
+    <!-- ゲームオーバー画面 -->
+    <div id="gameOver" style="display: none;">
+      <div class="game-over-content">
+        <h1>GAME OVER</h1>
+        <p>最終スコア: <span id="finalScore">0</span></p>
+        <button onclick="startGame()">もう一度プレイ</button>
+      </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>

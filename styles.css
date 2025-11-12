@@ -38,3 +38,104 @@ body {
   border-radius: 8px;
   z-index: 100;
 }
+
+/* スタートボタン */
+#startButton {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  text-align: center;
+}
+
+#startButton button {
+  padding: 20px 40px;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+#startButton button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
+}
+
+#startButton button:active {
+  transform: scale(0.98);
+}
+
+/* ゲームオーバー画面 */
+#gameOver {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 300;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-over-content {
+  background: rgba(20, 20, 40, 0.95);
+  padding: 50px;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(255, 13, 114, 0.3);
+  border: 2px solid rgba(255, 13, 114, 0.5);
+}
+
+.game-over-content h1 {
+  font-size: 48px;
+  color: #ff0d72;
+  margin: 0 0 20px 0;
+  text-shadow: 0 0 20px rgba(255, 13, 114, 0.5);
+  animation: pulse 2s infinite;
+}
+
+.game-over-content p {
+  font-size: 24px;
+  margin: 20px 0;
+  color: #00ffcc;
+}
+
+.game-over-content button {
+  padding: 15px 35px;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 20px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+.game-over-content button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.game-over-content button:active {
+  transform: scale(0.98);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
