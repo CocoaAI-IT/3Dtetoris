@@ -1,0 +1,40 @@
+body {
+  margin: 0;
+  background-color: #000;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+#info {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 8px;
+  z-index: 100;
+}
+
+#gameStats {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 15px;
+  font-size: 16px;
+  border-radius: 8px;
+  z-index: 100;
+  min-width: 150px;
+}
+
+#nextPiece {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 8px;
+  z-index: 100;
+}
