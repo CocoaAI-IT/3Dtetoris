@@ -1,7 +1,7 @@
 // --- 定数定義 ---
-const WIDTH = 4;
+const WIDTH = 5;
 const HEIGHT = 12;
-const DEPTH = 4;
+const DEPTH = 5;
 const BLOCK_SIZE = 1;
 const DROP_INTERVAL = 800; // ms
 
@@ -33,10 +33,10 @@ let renCount = 0; // 連続消しカウンター
 let lastClearWasSpecial = false; // Back To Back判定用
 
 // --- テトリミノ定義 (3D配列: [y][z][x]) ---
-// 4×4フィールド用に調整
+// 5×5フィールド用に調整
 const tetrominoes = [
-  // I (3ブロック)
-  [[[1, 1, 1]]],
+  // I (4ブロック)
+  [[[1, 1, 1, 1]]],
   // O (キューブ形状 2×2×2)
   [
     [
@@ -393,6 +393,9 @@ function sceneInit() {
   });
 
   document.addEventListener("keydown", handleKey);
+
+  // モバイルコントロールの初期化
+  initMobileControls();
 }
 
 function create3DMatrix(w, h, d) {
@@ -945,4 +948,38 @@ function animate(time = 0) {
   if (nextPieceRenderer && gameState !== GameState.WAITING) {
     nextPieceRenderer.render(nextPieceScene, nextPieceCamera);
   }
+}
+
+// モバイルコントロール初期化
+function initMobileControls() {
+  const controlButtons = document.querySelectorAll('.control-btn');
+
+  controlButtons.forEach(button => {
+    const key = button.getAttribute('data-key');
+
+    // タッチイベントとクリックイベントの両方に対応
+    button.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      simulateKeyPress(key);
+    });
+
+    button.addEventListener('click', (e) => {
+      e.preventDefault();
+      simulateKeyPress(key);
+    });
+  });
+}
+
+// キープレスをシミュレート
+function simulateKeyPress(key) {
+  const event = new KeyboardEvent('keydown', {
+    key: key,
+    code: key,
+    keyCode: key.charCodeAt(0),
+    which: key.charCodeAt(0),
+    bubbles: true,
+    cancelable: true
+  });
+
+  document.dispatchEvent(event);
 }

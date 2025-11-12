@@ -45,6 +45,37 @@
       </div>
     </div>
 
+    <!-- モバイル用タッチコントロール -->
+    <div id="mobileControls">
+      <div class="control-section">
+        <h3>移動</h3>
+        <div class="dpad">
+          <button class="control-btn" id="btn-up" data-key="ArrowUp">↑</button>
+          <div class="dpad-middle">
+            <button class="control-btn" id="btn-left" data-key="ArrowLeft">←</button>
+            <button class="control-btn" id="btn-right" data-key="ArrowRight">→</button>
+          </div>
+          <button class="control-btn" id="btn-down" data-key="ArrowDown">↓</button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <h3>回転</h3>
+        <div class="rotation-controls">
+          <button class="control-btn rotate-btn" data-key="z">Y軸 ←</button>
+          <button class="control-btn rotate-btn" data-key="x">Y軸 →</button>
+          <button class="control-btn rotate-btn" data-key="a">X軸 ←</button>
+          <button class="control-btn rotate-btn" data-key="s">X軸 →</button>
+          <button class="control-btn rotate-btn" data-key="q">Z軸 ←</button>
+          <button class="control-btn rotate-btn" data-key="w">Z軸 →</button>
+        </div>
+      </div>
+
+      <div class="control-section">
+        <button class="control-btn drop-btn" id="btn-drop" data-key=" ">即落下</button>
+      </div>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="game.js"></script>
   </body>

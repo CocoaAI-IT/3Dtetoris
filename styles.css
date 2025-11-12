@@ -139,3 +139,206 @@ body {
     transform: scale(1.05);
   }
 }
+
+/* モバイルコントロール（デフォルトでは非表示） */
+#mobileControls {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  padding: 15px;
+  z-index: 150;
+  border-top: 2px solid rgba(0, 255, 204, 0.3);
+}
+
+.control-section {
+  margin-bottom: 15px;
+}
+
+.control-section h3 {
+  margin: 0 0 10px 0;
+  font-size: 14px;
+  color: #00ffcc;
+  text-align: center;
+}
+
+.control-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.control-btn:active {
+  transform: scale(0.95);
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  box-shadow: 0 0 15px rgba(102, 126, 234, 0.8);
+}
+
+/* 十字キー */
+.dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.dpad-middle {
+  display: flex;
+  gap: 60px;
+  justify-content: center;
+}
+
+#btn-up, #btn-down {
+  width: 60px;
+  height: 50px;
+}
+
+#btn-left, #btn-right {
+  width: 60px;
+  height: 50px;
+}
+
+/* 回転ボタン */
+.rotation-controls {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.rotate-btn {
+  font-size: 14px;
+  padding: 12px 8px;
+}
+
+/* 即落下ボタン */
+.drop-btn {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  display: block;
+  padding: 15px;
+  font-size: 18px;
+  background: linear-gradient(135deg, #ff0d72 0%, #ff6a00 100%);
+}
+
+.drop-btn:active {
+  background: linear-gradient(135deg, #ff6a00 0%, #ff0d72 100%);
+  box-shadow: 0 0 20px rgba(255, 13, 114, 0.8);
+}
+
+/* メディアクエリ：モバイル端末用 */
+@media (max-width: 768px) {
+  /* モバイルコントロールを表示 */
+  #mobileControls {
+    display: block;
+  }
+
+  /* 操作説明を簡略化 */
+  #info {
+    font-size: 12px;
+    padding: 8px;
+    max-width: 200px;
+  }
+
+  #info b {
+    display: block;
+    margin-bottom: 5px;
+  }
+
+  /* ゲーム統計を小さく */
+  #gameStats {
+    font-size: 14px;
+    padding: 10px;
+    min-width: 120px;
+  }
+
+  /* Next Pieceを小さく */
+  #nextPiece {
+    padding: 8px;
+  }
+
+  #nextCanvas {
+    width: 80px;
+    height: 80px;
+  }
+
+  /* スタートボタンを調整 */
+  #startButton button {
+    padding: 15px 30px;
+    font-size: 20px;
+  }
+
+  /* ゲームオーバー画面を調整 */
+  .game-over-content {
+    padding: 30px 20px;
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .game-over-content h1 {
+    font-size: 36px;
+  }
+
+  .game-over-content p {
+    font-size: 20px;
+  }
+
+  .game-over-content button {
+    padding: 12px 25px;
+    font-size: 18px;
+  }
+}
+
+/* さらに小さい画面用 */
+@media (max-width: 480px) {
+  #info {
+    font-size: 10px;
+    padding: 6px;
+  }
+
+  #gameStats {
+    font-size: 12px;
+    padding: 8px;
+    min-width: 100px;
+  }
+
+  #nextPiece {
+    padding: 6px;
+  }
+
+  #nextCanvas {
+    width: 60px;
+    height: 60px;
+  }
+
+  .control-btn {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  .rotate-btn {
+    font-size: 12px;
+    padding: 10px 6px;
+  }
+
+  .dpad-middle {
+    gap: 40px;
+  }
+
+  #btn-up, #btn-down, #btn-left, #btn-right {
+    width: 50px;
+    height: 45px;
+  }
+}
